@@ -28,7 +28,15 @@ const loginController = async (req, res, next) => {
     delete user._doc?.password;
     delete user._doc?.nid;
 
-    res.json({message: "User Lodged In Successfully", token, user});
+    // Set the token as a cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      maxAge: 3600000,
+      sameSite: "None",
+      secure: true,
+    }); // Max age in milliseconds (3600000ms=1 hour)
+
+    res.json({message: "User Lodged In Successfully"});
   } catch (error) {
     next(error);
   }

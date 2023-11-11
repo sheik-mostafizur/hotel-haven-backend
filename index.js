@@ -1,18 +1,20 @@
 require("dotenv").config();
 const express = require("express");
-const cors = require("cors");
 const app = express();
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const port = process.env.PORT || 3001;
 
 const dbName = "hotel-haven";
 const URI = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.p7e2eey.mongodb.net/${dbName}?retryWrites=true&w=majority`;
-// const URI = `mongodb://127.0.0.1:27017/${dbName}`;
 
 const connectDB = require("./config/db");
 const routes = require("./routes");
 
-app.use(cors());
+app.use(cors({credentials: true, origin: process.env.ROOT_FRONTEND}));
 app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+app.use(cookieParser());
 
 // all routes included
 app.use(routes);

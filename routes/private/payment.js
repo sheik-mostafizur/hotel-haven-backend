@@ -1,7 +1,8 @@
 const router = require("express").Router();
 const { default: mongoose } = require("mongoose");
 const Room = require("../../models/Room");
-const SSLCommerzPayment = require('sslcommerz-lts')
+const SSLCommerzPayment = require('sslcommerz-lts');
+const Payment = require("../../models/Payment");
 const store_id = 'hotel654b12a0eb375'
 const store_passwd = 'hotel654b12a0eb375@ssl'
 const is_live = false //true for live, false for sandbox
@@ -11,6 +12,7 @@ router.get("/", (req, res, next) => {
     next(error);
   }
 });
+
 const trans_id = new mongoose.Types.ObjectId().toString();
 
 router.post("/order", async(req, res, next) => {
@@ -56,14 +58,20 @@ sslcz.init(data).then(apiResponse => {
   console.log('Redirecting to: ', GatewayPageURL)
 });
 
-// router.post('/success/:tranId' , async(req,res)=>{
-//   const transction = req.params.tranId
-// })
+const orderDetails = new Payment({
+  'transactionId' : trans_id,
+  'userId' : req.user._id,
+  'roomId' : req.body.room._id,
+
+})
+
+
   } 
   
   catch (error) {
     next(error);
   }
 });
+
 
 module.exports = router;
